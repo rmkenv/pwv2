@@ -1,0 +1,29 @@
+# Federal Regulatory Compliance RAG System
+# Complete Requirements
+
+# Web Crawling
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+PyMuPDF>=1.23.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Vector Embeddings & Search
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+# faiss-gpu>=1.7.4  # Uncomment for GPU support
+
+# AI Integration
+openai>=1.0.0
+
+# API Server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0

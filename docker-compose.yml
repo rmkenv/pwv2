@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - VECTOR_DB_PATH=/app/vector_db/regulatory_vector_db
+    volumes:
+      - ./vector_db:/app/vector_db
+      - ./federal_crawl_output:/app/federal_crawl_output
+    restart: unless-stopped

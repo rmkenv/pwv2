@@ -1,0 +1,29 @@
+# RAG System Configuration
+
+crawler:
+  max_depth: 2
+  delay_seconds: 2.0
+  max_pages_per_domain: 100
+  output_dir: "federal_crawl_output"
+
+processor:
+  chunk_size: 1000
+  chunk_overlap: 200
+
+embeddings:
+  model_name: "all-MiniLM-L6-v2"
+  batch_size: 32
+
+vector_db:
+  output_dir: "vector_db"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins:
+    - "*"
+
+ai:
+  model: "gpt-4o-mini"
+  temperature: 0.3
+  max_tokens: 1000
