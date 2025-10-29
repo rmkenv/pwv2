@@ -1,0 +1,13 @@
+# Lightweight RAG System - Minimal Requirements
+
+# Essential (for crawling)
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# Optional (for AI features)
+openai>=1.0.0
+
+# That's it! No heavy dependencies needed.
+# - No sentence-transformers (uses simple TF-IDF)
+# - No FAISS (uses in-memory search)
+# - No pandas (uses native Python)
