@@ -9,7 +9,7 @@ import re
 import json
 import time
 import hashlib
-from typing import List, Dict, Any, Optional, Set
+from typing import Optional
 from datetime import datetime
 from urllib.parse import urljoin, urlparse
 from collections import deque
@@ -18,7 +18,6 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-# For PDF support
 try:
     import fitz  # PyMuPDF
     PDF_SUPPORT = True
@@ -136,7 +135,7 @@ class FederalURLCrawler:
         except Exception:
             return False
 
-    def extract_text_from_html(self, html_content: str, url: str) -> Dict[str, Any]:
+    def extract_text_from_html(self, html_content: str, url: str) -> dict:
         """Extract clean text and links from HTML"""
         soup = BeautifulSoup(html_content, 'lxml')
 
@@ -201,10 +200,10 @@ class FederalURLCrawler:
             'text_length': len(clean_text)
         }
 
-    def extract_text_from_pdf(self, pdf_url: str) -> Dict[str, Any]:
+    def extract_text_from_pdf(self, pdf_url: str) -> dict:
         """Download and extract text from PDF"""
         if not PDF_SUPPORT:
-            return {'title': 'PDF (extraction not available)', 'text': '', 'links': []}
+            return {'title': 'PDF (extraction not available)', 'text': '', 'links': [], 'text_length': 0}
 
         try:
             # Download PDF
@@ -239,14 +238,14 @@ class FederalURLCrawler:
 
         except Exception as e:
             print(f"    ⚠ PDF extraction error: {e}")
-            return {'title': 'PDF (extraction failed)', 'text': '', 'links': []}
+            return {'title': 'PDF (extraction failed)', 'text': '', 'links': [], 'text_length': 0}
 
     def crawl_url(
         self,
         url: str,
         depth: int = 0,
         parent_url: Optional[str] = None
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict]:
         """
         Crawl a single URL and return extracted content
 
@@ -283,7 +282,6 @@ class FederalURLCrawler:
         try:
             # Respect rate limiting
             time.sleep(self.delay_seconds)
-
             # Make request
             response = self.session.get(url, timeout=30)
             response.raise_for_status()
@@ -327,7 +325,7 @@ class FederalURLCrawler:
             self.failed_urls.append({'url': url, 'error': str(e), 'depth': depth})
             return None
 
-    def save_page_content(self, content: Dict[str, Any]):
+    def save_page_content(self, content: dict):
         """Save individual page content to JSON file"""
         # Create safe filename from URL
         url_hash = hashlib.md5(content['url'].encode()).hexdigest()[:12]
@@ -405,9 +403,11 @@ class FederalURLCrawler:
         print(f"Loading URLs from: {csv_path}")
         df = pd.read_csv(csv_path)
 
-        # Filter for federal jurisdiction
-        if jurisdiction_filter:
+        # Check for 'Jurisdiction' column before filtering
+        if 'Jurisdiction' in df.columns:
             df = df[df['Jurisdiction'] == jurisdiction_filter]
+        else:
+            print("Warning: 'Jurisdiction' column not found in CSV. Proceeding with all URLs.")
 
         # Get unique URLs
         urls = df['URL'].dropna().unique().tolist()
